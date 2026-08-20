@@ -1,0 +1,35 @@
+# Copy to config.local.toml before editing.
+
+[server]
+host = "127.0.0.1"
+port = 8765
+log_level = "info"
+keepalive_seconds = 5.0
+
+[model]
+backend = "openvino"
+path = "models/local-coder"
+id = "local-coder"
+device = "NPU"
+allow_cpu_fallback = false
+max_prompt_tokens = 4096
+min_response_tokens = 512
+max_new_tokens = 768
+temperature = 0.0
+cache_dir = ".cache/openvino"
+prefill_hint = "DYNAMIC"
+generate_hint = "BEST_PERF"
+
+[agent]
+prompt_char_budget = 10000
+tool_schema_char_budget = 4500
+max_history_items = 20
+max_repair_attempts = 1
+response_chunk_chars = 96
+
+[security]
+loopback_only = true
+validate_host_header = true
+max_request_bytes = 16777216
+# api_token_env = "NPU_CODEX_API_TOKEN"
+redact_request_bodies = true

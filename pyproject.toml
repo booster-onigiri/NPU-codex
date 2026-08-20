@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "npu-codex"
+version = "0.1.0"
+description = "A loopback-only OpenAI Responses API bridge that lets Codex use a small OpenVINO GenAI model on an Intel NPU."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "booster-onigiri" }]
+keywords = ["codex", "openvino", "npu", "local-llm", "responses-api"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows :: Windows 11",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+dependencies = [
+  "fastapi>=0.116,<1",
+  "pydantic>=2.11,<3",
+  "uvicorn>=0.35,<1",
+  "zstandard>=0.23,<1",
+]
+
+[project.optional-dependencies]
+npu = [
+  "openvino==2026.3.0",
+  "openvino-tokenizers==2026.3.0.0",
+  "openvino-genai==2026.3.0.0",
+]
+export = [
+  "nncf==2.18.0",
+  "onnx==1.18.0",
+  "optimum-intel[openvino,nncf]==1.25.2",
+  "transformers==5.0.0",
+]
+dev = [
+  "httpx>=0.28,<1",
+  "pytest>=8.4,<10",
+  "pytest-cov>=6,<8",
+  "ruff>=0.12,<1",
+]
+
+[project.scripts]
+npu-codex = "npu_codex.cli:main"
+
+[project.urls]
+Repository = "https://github.com/booster-onigiri/NPU-codex"
+Issues = "https://github.com/booster-onigiri/NPU-codex/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/npu_codex"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]

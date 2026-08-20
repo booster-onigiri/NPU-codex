@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Local runtime state
+config.local.toml
+.codex-local/
+.cache/
+.npucache/
+logs/
+*.log
+
+# Models and large generated artifacts
+models/*
+!models/.gitkeep
+wheelhouse/
+*.blob
+*.bin
+*.safetensors
+*.onnx
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+auth.json
