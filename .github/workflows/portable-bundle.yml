@@ -1,6 +1,12 @@
 name: portable-windows-bundle
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/portable-bundle.yml'
+      - 'pyproject.toml'
+      - 'scripts/**'
+      - 'src/**'
   workflow_dispatch:
     inputs:
       include_model:
@@ -48,7 +54,7 @@ jobs:
           $Arguments = @(
             "-ExecutionPolicy", "Bypass",
             "-File", ".\scripts\build-portable-bundle.ps1",
-            "-CodexVersion", "${{ inputs.codex_version }}",
+            "-CodexVersion", "${{ inputs.codex_version || 'latest' }}",
             "-Force"
           )
           if ("${{ inputs.include_model }}" -eq "true") {
