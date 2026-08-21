@@ -6,7 +6,7 @@ from typing import Any
 from .backends import GenerationOptions, InferenceBackend
 from .config import AppConfig
 from .prompting import PromptBuilder
-from .protocol import ResponsesRequest, ResponsePlan, create_plan, new_response_id
+from .protocol import ResponsePlan, ResponsesRequest, create_plan, new_response_id
 from .tooling import (
     ActionParseError,
     ModelAction,

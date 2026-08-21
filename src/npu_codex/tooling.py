@@ -4,7 +4,6 @@ import json
 from dataclasses import dataclass
 from typing import Any, Literal
 
-
 ToolKind = Literal["function", "custom"]
 ActionKind = Literal["message", "tool_call", "custom_tool_call"]
 
