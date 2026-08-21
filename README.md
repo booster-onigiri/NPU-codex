@@ -168,6 +168,19 @@ Codexは生成されたprovider設定の`env_key`から、この値をBearerト�
 
 ## 閉域PCへの持込み
 
+準備用PCがない場合は、GitHub Actionsの`portable-windows-bundle`から、埋込みPythonと
+`codex.exe`を含むportable ZIPを生成できます。物理NPU試験用にはworkflow入力の
+`include_model`を有効にします。展開後の初期化とログ採取は次のとおりです。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\initialize-portable.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\collect-validation.ps1
+```
+
+詳細は[`docs/OFFLINE_DEPLOYMENT.md`](docs/OFFLINE_DEPLOYMENT.md)を参照してください。
+
+準備用Windows PCを使える場合は、従来のwheelhouse方式も利用できます。
+
 接続可能な準備用Windows PCで、依存wheelと必要ファイルをまとめます。
 
 ```powershell

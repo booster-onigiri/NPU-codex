@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add a GitHub Actions-built Windows portable bundle with embedded Python and Codex CLI.
+- Add portable runtime resolution, first-run initialization, and validation log collection.
+- Allow optional Qwen2.5-Coder-1.5B INT4 OpenVINO model export in the bundle workflow.
+
 ## 0.1.0 - 2026-08-21
 
 ### Added

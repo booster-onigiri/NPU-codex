@@ -1,5 +1,33 @@
 # Offline Deployment
 
+## 準備用PCがない場合（portable bundle）
+
+GitHub Actionsの`portable-windows-bundle`を手動実行すると、対象PCへPython、
+Node.js、Codex CLIをインストールせずに使える`NPUCodexPortable.zip`を生成できます。
+
+1. GitHubの**Actions**から`portable-windows-bundle`を選ぶ
+2. **Run workflow**を開く
+3. 最初の接続確認だけなら`include_model=false`、物理NPU試験なら`true`を選ぶ
+4. 完了後、Artifactsの`NPUCodexPortable-<commit>`をダウンロードする
+5. ZIPと`.sha256.txt`を対象PCへ持ち込み、ハッシュを照合する
+
+対象PCでは次だけを実行します。
+
+```powershell
+Expand-Archive .\NPUCodexPortable.zip -DestinationPath C:\Tools\NPUCodex
+cd C:\Tools\NPUCodex
+powershell -ExecutionPolicy Bypass -File .\scripts\initialize-portable.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\collect-validation.ps1
+```
+
+モデルなしartifactでは`initialize-portable.ps1 -Mock`を使用してください。生成された
+`validation-<日時>.zip`を解析用に共有できます。ログには認証情報や文書本文を収集しません。
+
+> [!IMPORTANT]
+> GitHubホストrunnerで作成したbundleであり、物理Intel NPU上の動作を保証するものでは
+> ありません。`include_model=true`はモデル取得・変換に時間がかかり、artifact容量制限で
+> 失敗する可能性があります。その場合はruntimeとモデルを別artifactへ分割します。
+
 ## 前提
 
 閉域PCへ持ち込む前に、組織のソフトウェア導入申請、媒体検査、ライセンス確認、脆弱性確認を完了してください。ここでいう「offline」は、Python依存関係とモデルを外部通信なしで導入できることを指し、OSレベルの通信遮断を自動設定するものではありません。

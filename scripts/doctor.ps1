@@ -5,11 +5,10 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$Root = Split-Path -Parent $PSScriptRoot
-$Python = Join-Path $Root ".venv\Scripts\python.exe"
+. (Join-Path $PSScriptRoot "runtime-paths.ps1")
+$Python = Get-NpuCodexPython
 $ConfigPath = if ([IO.Path]::IsPathRooted($Config)) { $Config } else { Join-Path $Root $Config }
 
-if (-not (Test-Path $Python)) { throw "Run scripts\bootstrap.ps1 first." }
 $Arguments = @("-m", "npu_codex", "doctor", "--config", $ConfigPath)
 if ($Json) { $Arguments += "--json" }
 & $Python @Arguments
