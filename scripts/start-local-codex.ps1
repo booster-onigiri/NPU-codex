@@ -10,20 +10,17 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$Root = Split-Path -Parent $PSScriptRoot
-$Python = Join-Path $Root ".venv\Scripts\python.exe"
+. (Join-Path $PSScriptRoot "runtime-paths.ps1")
+$Python = Get-NpuCodexPython
+$Codex = Get-NpuCodexCli
 $ConfigPath = if ([IO.Path]::IsPathRooted($Config)) { $Config } else { Join-Path $Root $Config }
 $CodexHomePath = if ([IO.Path]::IsPathRooted($CodexHome)) { $CodexHome } else { Join-Path $Root $CodexHome }
 $CodexConfig = Join-Path $CodexHomePath "config.toml"
 
-if (-not (Test-Path $Python)) { throw "Run scripts\bootstrap.ps1 first." }
 if (-not (Test-Path $Workspace -PathType Container)) { throw "Workspace not found: $Workspace" }
 if (-not (Test-Path $CodexConfig)) { throw "Run scripts\configure-codex.ps1 first." }
 if (Test-Path (Join-Path $CodexHomePath "auth.json")) {
     throw "Dedicated CODEX_HOME must not contain auth.json: $CodexHomePath"
-}
-if (-not (Get-Command codex -ErrorAction SilentlyContinue)) {
-    throw "Codex CLI was not found in PATH."
 }
 
 # Verify the bridge before starting Codex. Import the TOML through the project CLI
@@ -59,7 +56,7 @@ if ($Offline) {
 
 Push-Location (Resolve-Path $Workspace)
 try {
-    & codex @CodexArguments
+    & $Codex @CodexArguments
     exit $LASTEXITCODE
 } finally {
     Pop-Location

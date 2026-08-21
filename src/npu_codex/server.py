@@ -24,7 +24,6 @@ from .protocol import (
 from .runtime import AgentRuntime
 from .version import __version__
 
-
 ASGIReceive = Callable[[], Awaitable[dict[str, Any]]]
 ASGISend = Callable[[dict[str, Any]], Awaitable[None]]
 

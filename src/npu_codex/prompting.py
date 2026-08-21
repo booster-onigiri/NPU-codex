@@ -7,7 +7,6 @@ from typing import Any
 from .config import AgentConfig
 from .tooling import ToolSpec, tool_catalog_json
 
-
 MODEL_CONTRACT = """You are the decision model inside a local coding-agent harness.
 The host application, not you, reads files, runs commands, edits code, and applies patches.
 Choose exactly one next action. Return exactly one JSON object with no Markdown and no text outside it.

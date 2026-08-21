@@ -34,7 +34,7 @@ class ModelConfig(BaseModel):
     generate_hint: Literal["FAST_COMPILE", "BEST_PERF"] = "BEST_PERF"
 
     @model_validator(mode="after")
-    def validate_device(self) -> "ModelConfig":
+    def validate_device(self) -> ModelConfig:
         self.device = self.device.strip().upper()
         if not self.device:
             raise ValueError("model.device must not be empty")

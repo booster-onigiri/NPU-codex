@@ -1,0 +1,80 @@
+name: portable-windows-bundle
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/portable-bundle.yml'
+      - 'pyproject.toml'
+      - 'scripts/**'
+      - 'src/**'
+  workflow_dispatch:
+    inputs:
+      include_model:
+        description: Include Qwen2.5-Coder-1.5B INT4 OpenVINO model
+        required: true
+        default: false
+        type: boolean
+      codex_version:
+        description: '@openai/codex npm version'
+        required: true
+        default: latest
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Export OpenVINO INT4 model
+        if: inputs.include_model
+        shell: pwsh
+        run: |
+          powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap.ps1 -Mock
+          powershell -ExecutionPolicy Bypass -File .\scripts\export-model.ps1 `
+            -ModelId "Qwen/Qwen2.5-Coder-1.5B-Instruct" `
+            -OutputDirectory .\models\local-coder `
+            -GroupSize 128 `
+            -InstallDependencies
+
+      - name: Build portable bundle
+        shell: pwsh
+        run: |
+          $Arguments = @(
+            "-ExecutionPolicy", "Bypass",
+            "-File", ".\scripts\build-portable-bundle.ps1",
+            "-CodexVersion", "${{ inputs.codex_version || 'latest' }}",
+            "-Force"
+          )
+          if ("${{ inputs.include_model }}" -eq "true") {
+            $Arguments += @("-ModelDirectory", ".\models\local-coder")
+          }
+          powershell @Arguments
+
+      - name: Portable runtime smoke check
+        shell: pwsh
+        run: |
+          $Bundle = ".\dist\NPUCodexPortable"
+          powershell -ExecutionPolicy Bypass -File "$Bundle\scripts\initialize-portable.ps1" -Mock
+          powershell -ExecutionPolicy Bypass -File "$Bundle\scripts\doctor.ps1" -Json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NPUCodexPortable-${{ github.sha }}
+          path: |
+            dist/NPUCodexPortable.zip
+            dist/NPUCodexPortable.zip.sha256.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

@@ -6,14 +6,13 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$Root = Split-Path -Parent $PSScriptRoot
-$Python = Join-Path $Root ".venv\Scripts\python.exe"
+. (Join-Path $PSScriptRoot "runtime-paths.ps1")
+$Python = Get-NpuCodexPython
 $ConfigPath = if ([IO.Path]::IsPathRooted($Config)) { $Config } else { Join-Path $Root $Config }
 $CodexHomePath = if ([IO.Path]::IsPathRooted($CodexHome)) { $CodexHome } else { Join-Path $Root $CodexHome }
 $Output = Join-Path $CodexHomePath "config.toml"
 $AuthFile = Join-Path $CodexHomePath "auth.json"
 
-if (-not (Test-Path $Python)) { throw "Run scripts\bootstrap.ps1 first." }
 if (Test-Path $AuthFile) {
     throw "Dedicated CODEX_HOME contains auth.json. Remove it manually after confirming it is not needed: $AuthFile"
 }
